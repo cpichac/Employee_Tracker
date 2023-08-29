@@ -1,8 +1,9 @@
 const inquirer = require('inquirer');
 const {
   getAllDepartments,
+  getAllRoles,
   addDepartment,
-} = require('./db/db.js'); // Update the path accordingly
+} = require('./db/db'); // Update the path accordingly
 
 // Main menu choices
 const mainMenuChoices = [
@@ -26,16 +27,16 @@ async function mainMenu() {
 
   switch (choice) {
     case 'View all departments':
-      // Call the function to fetch and display all departments
+      await viewAllDepartments();
       break;
     case 'View all roles':
-      // Call the function to fetch and display all roles
+      await viewAllRoles();
       break;
     case 'View all employees':
-      // Call the function to fetch and display all employees
+      // Call the function to view all employees
       break;
     case 'Add a department':
-      await addDepartmentPrompt(); // Call the add department prompt function
+      await addDepartmentPrompt();
       break;
     // ... (Other cases)
     case 'Exit':
@@ -50,6 +51,24 @@ async function mainMenu() {
   mainMenu();
 }
 
+async function viewAllDepartments() {
+  try {
+    const departments = await getAllDepartments();
+    console.table(departments);
+  } catch (error) {
+    console.error('Error fetching departments:', error);
+  }
+}
+
+async function viewAllRoles() {
+  try {
+    const roles = await getAllRoles();
+    console.table(roles);
+  } catch (error) {
+    console.error('Error fetching roles:', error);
+  }
+}
+
 async function addDepartmentPrompt() {
   const { departmentName } = await inquirer.prompt({
     name: 'departmentName',
@@ -58,7 +77,6 @@ async function addDepartmentPrompt() {
     validate: (input) => input.trim() !== '',
   });
 
-  // Call the function to add the new department to the database
   try {
     await addDepartment(departmentName);
     console.log('Department added successfully!');
@@ -72,3 +90,4 @@ async function addDepartmentPrompt() {
 
 // Start the application
 mainMenu();
+
